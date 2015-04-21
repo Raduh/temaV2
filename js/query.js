@@ -89,7 +89,7 @@ MWS.query = function(text, math){
 		}; 
 	}; 
 
-	this.getAll = function(callback, callback_fail){
+	this.getAll = function(callback, callback_schemata, callback_fail){
 		var callback = (typeof callback == "function")?callback:function(){}; 
 		var callback_fail = (typeof callback_fail == "function")?callback:function(){}; 
 
@@ -98,6 +98,8 @@ MWS.query = function(text, math){
 			var cache = {}; 
 
 			var count = data.total || 0; 
+
+            var processedSchemata = false;
 
 			var res = function(from, len, cb, cb_fail){
 				var ret = []; 
@@ -123,6 +125,10 @@ MWS.query = function(text, math){
 							//retrieve the entries if we are not above the length
 							get(here, len-i, function(data){ //get the remaining entries
 								var hits = data.hits; 
+                                if (!processedSchemata) {
+                                    callback_schemata(data.schemata);
+                                    processedSchemata = true;
+                                }
 								for(var j=0;j<hits.length;j++){
 									cache["res_"+(here+j)] = make_proper_entry(hits[j], data.qvars);
 								}
@@ -140,7 +146,6 @@ MWS.query = function(text, math){
 			}; 
 
 			res.count = count; 
-
 
 			callback(res);
 		}, callback_fail); 
