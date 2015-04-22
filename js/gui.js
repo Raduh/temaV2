@@ -252,21 +252,48 @@ MWS.gui = {
 		myQuery.getAll(function(res){
 			MWS.gui.renderSearchResults(res, 0, search_mathml);
         }, function(exprs) {
-            var $sch = $("#schemata").empty();
-            for (var s in exprs) {
-                console.log("proc schemata");
-                var title = exprs[s].title;
-                var subst = exprs[s].subst;
-                var titleSchema = MWS.gui.schematizeFormula(title, subst);
-                var titleElem = $("<span>");
-                titleElem.append(titleSchema);
-                $sch.append($("<br>"));
-                $sch.append(MWS.makeMath(titleElem));
-            }
+            MWS.gui.renderSchemata(exprs);
         }, function(){
             MWS.gui.renderSearchFailure("Unable to search, please check your connection and try again. ");
         });
     },
+
+    "renderSchemata": function(exprs) {
+        var $sch = $("#schemata").empty();
+        var schContainer = $("<div>");
+
+        for (var s in exprs) {
+            var title = exprs[s].title;
+            var subst = exprs[s].subst;
+            var titleSchema = MWS.gui.schematizeFormula(title, subst);
+            var titleElem = $("<span>");
+            titleElem.append(titleSchema);
+            schContainer.append($("<br>"));
+            schContainer.append(titleElem);
+        }
+
+        var schDropdown = $("<div>").addClass("panel panel-default")
+            .append(
+                    $("<div>").addClass("panel-heading").append(
+                        $("<h4>").addClass("panel-title")
+                        .append(
+                            $("<a>").attr({
+                                "data-toggle": "collapse",
+                                "data-parent": "#schemata",
+                                "href" : "#schContainer"
+                            })
+                            .append($("<span style='font-weight: bold;'>Math Facets</span>"))
+                        )
+                    ),
+                    $("<div>")
+                    .addClass("panel-collapse collapse")
+                    .attr("id", "schContainer")
+                    .append(MWS.makeMath(schContainer))
+            );
+
+        $sch.append(schDropdown);
+    },
+
     "renderSearchResults": function(res, pageId, search_mathml) {
         //render the search results
         var $res = $("#results").empty();
