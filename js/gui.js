@@ -218,11 +218,34 @@ MWS.gui = {
 	},
 
     "performSchemaSearch": function(math){
-		var latex = MWS.gui.getTex(math);
+		var text = MWS.gui.getSearchText();
+
+		if(math === false){
+			MWS.gui.renderSearchFailure("Please wait for the math to finish rendering! ");
+			return;
+		}
+
+
         $("#schemata").empty();
-        $("#results").empty();
-        $("#query-math").val(latex);
-        $("#search-math").click();
+		$("#results")
+		.empty()
+		.append(
+			$(document.createElement("span"))
+			.css("color", "gray")
+			.text("Querying server, please wait ...")
+		)
+
+
+		var myQuery = new MWS.query(text, math); //create a new query
+
+		myQuery.getAll(function(res){
+			MWS.gui.renderSearchResults(res, 0, math);
+        }, function(exprs) {
+            MWS.gui.renderSchemata(exprs);
+        }, function(){
+            MWS.gui.renderSearchFailure("Unable to search, please check your connection and try again. ");
+        });
+
     },
 
     "getTex": function(math) {
@@ -230,6 +253,14 @@ MWS.gui = {
         var match = TEX_REGEX.exec(math);
         if (match == null) return "";
         return match[1];
+    },
+
+    "getCMML": function(expr) {
+        var CMML_REGEX =
+            /<annotation-xml[^>]*Content[^>]*>(.*?)<\/annotation-xml>/g;
+        var match = CMML_REGEX.exec(expr);
+        if (match == null) return "";
+        else return match[1];
     },
 
 	"performSearch": function(search_mathml){
@@ -253,6 +284,7 @@ MWS.gui = {
 		}
 
 
+        $("#schemata").empty();
 		$("#results")
 		.empty()
 		.append(
@@ -287,7 +319,9 @@ MWS.gui = {
             $(document).ready(function() {
                 titleElem.click(function(e) {
                     return;
-                    MWS.gui.performSchemaSearch(titleElem.html());
+                    var cmml = MWS.gui.getCMML(titleElem.html());
+                    cmml = cmml.replace(/qvar/g, 'mws:qvar');
+                    MWS.gui.performSchemaSearch(cmml);
                 });
             });
             titleElem.css("cursor", "pointer");
@@ -704,16 +738,15 @@ MWS.gui = {
         var schema = $(formula);
 
         substitutions.map(function(subst) {
-            var cutElem = schema.find("[id='" + subst + "']");
-            if (cutElem.children().length == 0) {
-                cutElem.attr("mathcolor", "red");
-            } else {
-                var qvar_str;
-                if (useCounter) qvar_str = "?x" + qvar;
-                else qvar_str = "?" + qvar;
-                cutElem.html("<mi mathcolor='red'>" + qvar_str + "</mi>");
-                qvar = nextQvar(qvar);
-            }
+            var cutElemPM = schema.find("[id='" + subst + "']");
+            var cutElemCM = schema.find("[xref='" + subst + "']");
+
+            var qvar_str;
+            if (useCounter) qvar_str = "?x" + qvar;
+            else qvar_str = "?" + qvar;
+            cutElemPM.html("<mi mathcolor='red'>" + qvar_str + "</mi>");
+            cutElemCM.html("<qvar>" + qvar_str + "</qvar>");
+            qvar = nextQvar(qvar);
         });
         return schema;
     }
