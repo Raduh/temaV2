@@ -217,6 +217,21 @@ MWS.gui = {
 		return $(document.getElementById("query-math")).val();
 	},
 
+    "performSchemaSearch": function(math){
+		var latex = MWS.gui.getTex(math);
+        $("#schemata").empty();
+        $("#results").empty();
+        $("#query-math").val(latex);
+        $("#search-math").click();
+    },
+
+    "getTex": function(math) {
+        var TEX_REGEX = /<annotation [^>]*x-tex[^>]*>(.*?)<\/annotation>/g;
+        var match = TEX_REGEX.exec(math);
+        if (match == null) return "";
+        return match[1];
+    },
+
 	"performSearch": function(search_mathml){
 		var text = MWS.gui.getSearchText();
 		var math = MWS.gui.getSearchMath();
@@ -269,6 +284,14 @@ MWS.gui = {
             var titleElem = $("<span>");
             titleElem.append(titleSchema);
             schContainer.append($("<br>"));
+            $(document).ready(function() {
+                titleElem.click(function(e) {
+                    return;
+                    MWS.gui.performSchemaSearch(titleElem.html());
+                });
+            });
+            titleElem.css("cursor", "pointer");
+
             schContainer.append(titleElem);
         }
 
