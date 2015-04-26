@@ -239,7 +239,7 @@ MWS.gui = {
 		var myQuery = new MWS.query(text, math); //create a new query
 
 		myQuery.getAll(function(res){
-			MWS.gui.renderSearchResults(res, 0, math);
+			MWS.gui.renderSearchResults(res, 0, $(math));
         }, function(exprs) {
             MWS.gui.renderSchemata(exprs);
         }, function(){
@@ -318,7 +318,6 @@ MWS.gui = {
             schContainer.append($("<br>"));
             $(document).ready(function() {
                 titleElem.click(function(e) {
-                    return;
                     var cmml = MWS.gui.getCMML(titleElem.html());
                     cmml = cmml.replace(/qvar/g, 'mws:qvar');
                     MWS.gui.performSchemaSearch(cmml);
@@ -586,7 +585,8 @@ MWS.gui = {
 
 
             var is_on = false;
-            search_mathml = $("<div>").css("display", "inline").append(MWS.makeMath(search_mathml.clone())).addClass("hidden")
+            search_mathml = $("<div>").css("display", "inline")
+                .append(MWS.makeMath(search_mathml.clone())).addClass("hidden");
 
                 $("<button>").addClass("btn btn-default").text("Show substitutions").appendTo(body).click(function(){
                     search_mathml.get(0)
@@ -744,8 +744,8 @@ MWS.gui = {
             var qvar_str;
             if (useCounter) qvar_str = "?x" + qvar;
             else qvar_str = "?" + qvar;
-            cutElemPM.html("<mi mathcolor='red'>" + qvar_str + "</mi>");
-            cutElemCM.html("<qvar>" + qvar_str + "</qvar>");
+            cutElemPM.replaceWith("<mi mathcolor='red'>" + qvar_str + "</mi>");
+            cutElemCM.replaceWith("<qvar>" + qvar_str + "</qvar>");
             qvar = nextQvar(qvar);
         });
         return schema;
