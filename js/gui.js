@@ -744,7 +744,9 @@ MWS.gui = {
             var qvar_str;
             if (useCounter) qvar_str = "?x" + qvar;
             else qvar_str = "?" + qvar;
-            cutElemPM.replaceWith("<mi mathcolor='red'>" + qvar_str + "</mi>");
+
+            cutElemPM.replaceWith("<mi>" + qvar_str + "</mi>");
+            cutElemPM.addClass("math-highlight-qvar");
             cutElemCM.replaceWith("<qvar>" + qvar_str + "</qvar>");
             qvar = nextQvar(qvar);
         });
