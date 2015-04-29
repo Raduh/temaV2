@@ -348,6 +348,10 @@ MWS.gui = {
             );
 
         $sch.append(schDropdown);
+        $sch.find("*[mathcolor=red]").removeAttr("mathcolor").each(function() {
+            this.setAttribute("class", "math-highlight-qvar");
+        });
+
     },
 
     "renderSearchResults": function(res, pageId, search_mathml) {
@@ -744,9 +748,7 @@ MWS.gui = {
             var qvar_str;
             if (useCounter) qvar_str = "?x" + qvar;
             else qvar_str = "?" + qvar;
-
-            cutElemPM.replaceWith("<mi>" + qvar_str + "</mi>");
-            cutElemPM.addClass("math-highlight-qvar");
+            cutElemPM.replaceWith("<mi mathcolor='red'>" + qvar_str + "</mi>");
             cutElemCM.replaceWith("<qvar>" + qvar_str + "</qvar>");
             qvar = nextQvar(qvar);
         });
