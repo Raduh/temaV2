@@ -300,6 +300,11 @@ MWS.gui = {
 			MWS.gui.renderSearchResults(res, 0, search_mathml);
         }, function(exprs) {
             MWS.gui.renderSchemata(exprs);
+            /* hack because firefox can't fix its invalid format errors */
+            var schContainer = $("#schemata");
+            var schHtml = schContainer.html();
+            schContainer.html("");
+            schContainer.html(schHtml);
         }, function(){
             MWS.gui.renderSearchFailure("Unable to search, please check your connection and try again. ");
         });
@@ -347,11 +352,11 @@ MWS.gui = {
                     .append(MWS.makeMath(schContainer))
             );
 
-        $sch.append(schDropdown);
-        $sch.find("*[mathcolor=red]").removeAttr("mathcolor").each(function() {
+        schDropdown.find("*[mathcolor=red]")
+            .removeAttr("mathcolor").each(function() {
             this.setAttribute("class", "math-highlight-qvar");
         });
-
+        $sch.append(schDropdown);
     },
 
     "renderSearchResults": function(res, pageId, search_mathml) {
