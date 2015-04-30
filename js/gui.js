@@ -300,29 +300,25 @@ MWS.gui = {
 			MWS.gui.renderSearchResults(res, 0, search_mathml);
         }, function(exprs) {
             MWS.gui.renderSchemata(exprs);
-            /* hack because firefox can't fix its invalid format errors */
-            var schContainer = $("#schemata");
-            var schHtml = schContainer.html();
-            schContainer.html("");
-            schContainer.html(schHtml);
-            var schContainerRendered = MWS.makeMath(schContainer);
-            schContainer.replaceWith(schContainerRendered);
-        }, function() {
-            MWS.gui.renderSearchFailure(
-                "Unable to search, please check your connection and try again. ");
+        }, function(){
+            MWS.gui.renderSearchFailure("Unable to search, please check your connection and try again. ");
         });
     },
 
     "renderSchemata": function(exprs) {
         var $sch = $("#schemata").empty();
-        var schContainer = $("<div class='mathContainer'>");
+        var schContainer = $("<div>");
 
         for (var s in exprs) {
             var title = exprs[s].title;
             var subst = exprs[s].subst;
             var titleSchema = MWS.gui.schematizeFormula(title, subst);
             var titleElem = $("<span>");
+            /* hack because firefox can't fix its invalid format errors */
             titleElem.append(titleSchema);
+            titleElemHtml = titleElem.html();
+            titleElem.html(titleElemHtml);
+
             schContainer.append($("<br>"));
             $(document).ready(function() {
                 titleElem.click(function(e) {
@@ -352,7 +348,7 @@ MWS.gui = {
                     $("<div>")
                     .addClass("panel-collapse collapse")
                     .attr("id", "schContainer")
-                    .append(schContainer)
+                    .append(MWS.makeMath(schContainer))
             );
 
         schDropdown.find("*[mathcolor=red]")
