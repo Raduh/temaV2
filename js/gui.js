@@ -305,14 +305,17 @@ MWS.gui = {
             var schHtml = schContainer.html();
             schContainer.html("");
             schContainer.html(schHtml);
-        }, function(){
-            MWS.gui.renderSearchFailure("Unable to search, please check your connection and try again. ");
+            var schContainerRendered = MWS.makeMath(schContainer);
+            schContainer.replaceWith(schContainerRendered);
+        }, function() {
+            MWS.gui.renderSearchFailure(
+                "Unable to search, please check your connection and try again. ");
         });
     },
 
     "renderSchemata": function(exprs) {
         var $sch = $("#schemata").empty();
-        var schContainer = $("<div>");
+        var schContainer = $("<div class='mathContainer'>");
 
         for (var s in exprs) {
             var title = exprs[s].title;
@@ -349,7 +352,7 @@ MWS.gui = {
                     $("<div>")
                     .addClass("panel-collapse collapse")
                     .attr("id", "schContainer")
-                    .append(MWS.makeMath(schContainer))
+                    .append(schContainer)
             );
 
         schDropdown.find("*[mathcolor=red]")
