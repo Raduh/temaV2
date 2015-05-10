@@ -316,19 +316,20 @@ MWS.gui = {
             var titleElem = $("<span>");
             /* hack because firefox can't fix its invalid format errors */
             titleElem.append(titleSchema);
-            titleElemHtml = titleElem.html();
+            var titleElemHtml = titleElem.html();
             titleElem.html(titleElemHtml);
 
-            schContainer.append($("<br>"));
             $(document).ready(function() {
                 titleElem.click(function(e) {
-                    var cmml = MWS.gui.getCMML(titleElem.html());
+                    var titleHtml = $(this).html();
+                    var cmml = MWS.gui.getCMML(titleHtml);
                     cmml = cmml.replace(/qvar/g, 'mws:qvar');
                     MWS.gui.performSchemaSearch(cmml);
                 });
             });
             titleElem.css("cursor", "pointer");
 
+            schContainer.append($("<br>"));
             schContainer.append(titleElem);
         }
 
