@@ -1,6 +1,6 @@
 //YOU MAY CHANGE THESE SETTINGS HERE
 MWS.config = {
-	"pagination_pagesize": 5, //entries per page
+	"pagination_pagesize": 50, //entries per page
 	"pagination_surr": 2, //how many pages to show each direction around the current page
 
 	"expand_first_result": false, //automatically open the first result on every page
